@@ -25,9 +25,10 @@ public class CV {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @OneToMany(mappedBy = "cv", cascade = CascadeType.ALL)
-    private List<User> users;
-
+    //    @OneToMany(mappedBy = "cv", cascade = CascadeType.ALL)
+//    private List<User> users;
+    @Column(name = "user_id", nullable = false)
+    private String userId;
 
     @Type(type = "json")
     @Column(columnDefinition = "json")
