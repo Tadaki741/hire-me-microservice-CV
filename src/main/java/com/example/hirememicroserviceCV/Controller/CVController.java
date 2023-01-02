@@ -2,12 +2,8 @@ package com.example.hirememicroserviceCV.Controller;
 
 import com.example.hirememicroserviceCV.Model.CV;
 import com.example.hirememicroserviceCV.Repository.CVRepository;
-import com.example.hirememicroserviceCV.Repository.UserRepository;
 import com.example.hirememicroserviceCV.Service.CVService;
 import org.springframework.web.bind.annotation.*;
-
-import javax.transaction.Transactional;
-import java.util.List;
 
 @RestController
 @RequestMapping("/cv")
@@ -15,12 +11,10 @@ import java.util.List;
 public class CVController {
 
     private final CVService cvService;
-    private final UserRepository userRepository;
     private final CVRepository cvRepository;
 
-    public CVController(CVService cvService, UserRepository userRepository, CVRepository cvRepository) {
+    public CVController(CVService cvService, CVRepository cvRepository) {
         this.cvService = cvService;
-        this.userRepository = userRepository;
         this.cvRepository = cvRepository;
     }
 
@@ -33,4 +27,10 @@ public class CVController {
         cv.setUserId(id);
         cvRepository.save(cv);
     }
+
+    @GetMapping(path = "/test")
+    public String test () {
+        return "Test from CV controller";
+    }
+
 }

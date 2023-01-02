@@ -2,7 +2,6 @@ package com.example.hirememicroserviceCV.Service;
 
 import com.example.hirememicroserviceCV.Model.CV;
 import com.example.hirememicroserviceCV.Repository.CVRepository;
-import com.example.hirememicroserviceCV.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,14 +13,12 @@ import java.util.Optional;
 
 @Service
 public class CVService {
-    private final UserRepository userRepository;
     private final String CV_CACHE = "CV";
     private final RedisTemplate<String, Object> redisTemplate;
     private final CVRepository cvRepository;
 
     @Autowired
-    public CVService(UserRepository userRepository, RedisTemplate<String, Object> redisTemplate, CVRepository cvRepository){
-        this.userRepository = userRepository;
+    public CVService(RedisTemplate<String, Object> redisTemplate, CVRepository cvRepository){
         this.redisTemplate = redisTemplate;
         this.cvRepository = cvRepository;
     }
