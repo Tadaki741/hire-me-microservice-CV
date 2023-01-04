@@ -1,14 +1,27 @@
 package com.example.hirememicroserviceCV.Controller;
 
+import com.example.hirememicroserviceCV.HttpResponse.ResponseBody;
 import com.example.hirememicroserviceCV.Model.CV;
+import com.example.hirememicroserviceCV.Model.LoginBody;
 import com.example.hirememicroserviceCV.Repository.CVRepository;
 import com.example.hirememicroserviceCV.Service.CVService;
+import com.example.hirememicroserviceCV.Service.RestService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/cv")
 @CrossOrigin(origins = "*")
 public class CVController {
+
+    private static final Logger logger = Logger.getLogger(CVController.class.getName());
+
+    @Autowired
+    private RestService restService;
 
     private final CVService cvService;
     private final CVRepository cvRepository;
@@ -28,9 +41,25 @@ public class CVController {
         cvRepository.save(cv);
     }
 
-    @GetMapping(path = "/test")
+    @PostMapping(path = "/test")
     public String test () {
         return "Test from CV controller";
+    }
+
+
+    @PostMapping(path = "/getAllCv")
+    public ResponseEntity<ResponseBody> getAllCV (@RequestBody LoginBody loginBody){
+        logger.warning(" --> inside getAllCV function but is verifying data ! <--");
+        logger.warning("idToken is: " + loginBody.getIdToken());
+
+        boolean isCorrect = this.restService.verifyIDToken(loginBody);
+        ResponseBody responseBody = new ResponseBody(isCorrect);
+
+        if (isCorrect){
+            return new ResponseEntity<>(responseBody,HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(responseBody,HttpStatus.UNAUTHORIZED);
     }
 
 }
