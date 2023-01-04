@@ -67,13 +67,16 @@ public class CVController {
                 ResponseBody responseBodyAllCV = new ResponseBody(userCVList);
                 return new ResponseEntity<>(responseBodyAllCV, HttpStatus.OK);
             }
+
+            else {
+                ResponseBody responseBody = new ResponseBody("Incorrect JWT value !");
+                return new ResponseEntity<>(responseBody,HttpStatus.UNAUTHORIZED);
+            }
         } catch (NullPointerException exception) {
             ResponseBody responseBody = new ResponseBody("Token not found !");
             return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
         }
 
-
-        return null;
     }
 
 }
