@@ -30,7 +30,7 @@ public class RestService {
 
 
     //Calling microservice-User
-    public boolean verifyIDToken(LoginBody loginBody) {
+    public boolean verifyIDToken(String requestHeaderToken) {
 
         String url = "http://localhost:18080/users/verify";
 
@@ -43,7 +43,7 @@ public class RestService {
 
         // create a map for post parameters
         Map<String, Object> map = new HashMap<>();
-        map.put("idToken", loginBody.getIdToken());
+        map.put("idToken", requestHeaderToken);
         // build the request
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
 

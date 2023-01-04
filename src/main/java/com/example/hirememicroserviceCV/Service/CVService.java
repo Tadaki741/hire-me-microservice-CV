@@ -44,10 +44,10 @@ public class CVService {
         hashOperations.put(CV_CACHE, cv.getId(), cv);
     }
 
-    public Optional<CV> findById(String id) {
-        CV redisUser = hashOperations.get(CV_CACHE, id);
+    public Optional<CV> findByEmail(String email) {
+        CV redisUser = hashOperations.get(CV_CACHE, email);
         if (redisUser != null) return Optional.of(redisUser);
-        Optional<CV> cv = this.cvRepository.findById(id);
+        Optional<CV> cv = this.cvRepository.findById(email);
         if (cv == null) {
             return null;
         }
@@ -69,5 +69,11 @@ public class CVService {
     public void deleteById(String id) {
         hashOperations.delete(CV_CACHE, id);
         this.cvRepository.deleteById(id);
+    }
+
+
+    //Find by user provided email
+    public List<CV> findAllCVWithEmail(String email){
+        return this.cvRepository.findAllByEmail(email);
     }
 }
