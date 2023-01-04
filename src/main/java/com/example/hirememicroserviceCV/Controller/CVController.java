@@ -56,6 +56,10 @@ public class CVController {
         ResponseBody responseBody = new ResponseBody(isCorrect);
 
         if (isCorrect){
+            //TODO: query all the cv then return them
+            
+
+
             return new ResponseEntity<>(responseBody,HttpStatus.OK);
         }
 
