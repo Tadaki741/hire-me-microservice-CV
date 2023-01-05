@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 public class CVController {
 
     private final CVService cvService;
+
     private final CVRepository cvRepository;
 
     public CVController(CVService cvService, CVRepository cvRepository) {

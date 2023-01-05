@@ -21,24 +21,4 @@ public class HireMeMicroserviceCvApplication {
         SpringApplication.run(HireMeMicroserviceCvApplication.class, args);
     }
 
-    @Bean
-    CommandLineRunner commandLineRunner() {
-        return args -> {
-            try {
-                //Initialize the firebase SDK
-                ClassLoader classLoader = HireMeMicroserviceCvApplication.class.getClassLoader();
-                InputStream serviceAccount = classLoader.getResourceAsStream("serviceAccountKey.json");
-
-                FirebaseOptions options = FirebaseOptions.builder()
-                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                        .build();
-
-                FirebaseApp.initializeApp(options);
-                logger.info(" --> Firebase SDK Initialized");
-            } catch (FileNotFoundException e) {
-                logger.severe(" --> JSON resource file not found !!!");
-            }
-        };
-    }
-
 }
