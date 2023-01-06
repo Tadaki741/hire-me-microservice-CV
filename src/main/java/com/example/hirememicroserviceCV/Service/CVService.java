@@ -34,34 +34,24 @@ public class CVService {
     public CV save(final CV cv) {
         CV newCV = this.cvRepository.save(cv);
         //Update data to redis
-        this.saveUserToCache(newCV);
+        this.saveCVToCache(newCV);
 
         //save to database
         return newCV;
     }
 
-    public void saveUserToCache(final CV cv) {
+    public void saveCVToCache(final CV cv) {
         hashOperations.put(CV_CACHE, cv.getId(), cv);
     }
 
     public Optional<CV> findByEmail(String email) {
         CV redisUser = hashOperations.get(CV_CACHE, email);
         if (redisUser != null) return Optional.of(redisUser);
-        Optional<CV> cv = this.cvRepository.findById(email);
-        if (cv == null) {
-            return null;
-        }
-        return cv;
+        return this.cvRepository.findById(email);
     }
 
     // Find all cv's operation.
     public List<CV> findAll() {
-        List<CV> cv = hashOperations.values(CV_CACHE);
-
-        if (!cv.isEmpty()){
-            return cv;
-        }
-
         return this.cvRepository.findAll();
     }
 

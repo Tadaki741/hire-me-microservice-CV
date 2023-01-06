@@ -2,7 +2,7 @@ package com.example.hirememicroserviceCV.Service;
 
 
 import com.example.hirememicroserviceCV.HttpResponse.ResponseBody;
-import com.example.hirememicroserviceCV.Model.LoginBody;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +23,13 @@ public class RestService {
     private static final Logger logger = Logger.getLogger(RestService.class.getName());
     private final RestTemplate restTemplate;
 
+    @Value("${USER_SERVICE_URL}")
+    private String userMicroserviceURL;
+
+    public void setUserServiceURL(String userServiceURL){
+        this.userMicroserviceURL = userServiceURL;
+    }
+
 
     public RestService(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
@@ -31,9 +38,6 @@ public class RestService {
 
     //Calling microservice-User
     public boolean verifyIDToken(String requestHeaderToken) {
-
-        String url = "http://localhost:18080/users/verify";
-
         // create headers
         HttpHeaders headers = new HttpHeaders();
         // set `content-type` header
@@ -48,7 +52,7 @@ public class RestService {
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
 
         // send POST request
-        ResponseEntity<ResponseBody> response = this.restTemplate.postForEntity(url, entity, ResponseBody.class);
+        ResponseEntity<ResponseBody> response = this.restTemplate.postForEntity(this.userMicroserviceURL + "/users/verify", entity, ResponseBody.class);
         logger.info(" --> CHECKING RESPONSE STATUS: " + response.getBody());
 
         //Checking value

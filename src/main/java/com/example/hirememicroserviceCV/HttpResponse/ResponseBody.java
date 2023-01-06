@@ -7,16 +7,16 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class ResponseBody {
-    private final Object data;
-    private final ResponseBody error;
+public class ResponseBody<T> {
+    private final T data;
+    private final ResponseError error;
 
-    public ResponseBody(Object data, ResponseBody error) {
+    public ResponseBody(T data, ResponseError error) {
         this.data = data;
         this.error = error;
     }
 
-    public ResponseBody(Object data){
+    public ResponseBody(T data){
         this(data, null);
     }
 

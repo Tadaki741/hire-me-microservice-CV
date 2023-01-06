@@ -1,9 +1,9 @@
 package com.example.hirememicroserviceCV.Controller;
 
 import com.example.hirememicroserviceCV.HttpResponse.ResponseBody;
+import com.example.hirememicroserviceCV.HttpResponse.ResponseError;
 import com.example.hirememicroserviceCV.Model.CV;
 import com.example.hirememicroserviceCV.Model.CVDTO;
-import com.example.hirememicroserviceCV.Repository.CVRepository;
 import com.example.hirememicroserviceCV.Service.CVService;
 import com.example.hirememicroserviceCV.Service.RestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,35 +21,30 @@ public class CVController {
 
     private static final Logger logger = Logger.getLogger(CVController.class.getName());
 
-    @Autowired
-    private RestService restService;
-
+    private final RestService restService;
     private final CVService cvService;
 
-    private final CVRepository cvRepository;
-
-    public CVController(CVService cvService, CVRepository cvRepository) {
+    @Autowired
+    public CVController(CVService cvService, RestService restService) {
         this.cvService = cvService;
-        this.cvRepository = cvRepository;
+        this.restService = restService;
     }
 
-    @PostMapping("/{email}/add")
-    public void addCV(@PathVariable String email, @RequestBody CVDTO cvdto) {
-//        if (userRepository.findByEmail(user.getEmail()) == null) userRepository.save(user);
-        CV cv = new CV(cvdto.getEmail(),cvdto.getCVname(),cvdto.getCVBody());
-        cvRepository.save(cv);
+    @PostMapping
+    public ResponseEntity<ResponseBody<CV>> addCV(@RequestBody CVDTO cvdto) {
+        CV cv = this.cvService.save(new CV(cvdto.getEmail(),cvdto.getCVname(),cvdto.getCVBody()));
+        ResponseBody<CV> responseBody = new ResponseBody<>(cv);
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/test")
+    @GetMapping(path = "/test")
     public String test() {
         return "Test from CV controller";
     }
 
 
     @GetMapping
-    public ResponseEntity<ResponseBody> getAllCV(@RequestHeader(name = "Authorization") String requestHeader, @RequestParam(name = "email") String email) {
-
-
+    public ResponseEntity<ResponseBody<List<CV>>> getAllCV(@RequestHeader(name = "Authorization") String requestHeader, @RequestParam(name = "email") String email) {
         logger.warning(" --> inside getAllCV function but is verifying data ! <--");
 
         try {
@@ -61,18 +56,18 @@ public class CVController {
             boolean isCorrect = this.restService.verifyIDToken(extractedToken);
 
             if (isCorrect) {
-                //TODO: query all the cv then return them
                 List<CV> userCVList = this.cvService.findAllCVWithEmail(email);
-                ResponseBody responseBodyAllCV = new ResponseBody(userCVList);
+                ResponseBody<List<CV>> responseBodyAllCV = new ResponseBody<>(userCVList);
                 return new ResponseEntity<>(responseBodyAllCV, HttpStatus.OK);
             }
 
-            else {
-                ResponseBody responseBody = new ResponseBody("Incorrect JWT value !");
-                return new ResponseEntity<>(responseBody,HttpStatus.UNAUTHORIZED);
-            }
+            ResponseError responseError = new ResponseError("Token is not correct", HttpStatus.UNAUTHORIZED.value());
+            ResponseBody responseBody = new ResponseBody<>(null, responseError);
+            return new ResponseEntity<>(responseBody, HttpStatus.UNAUTHORIZED);
+
         } catch (NullPointerException exception) {
-            ResponseBody responseBody = new ResponseBody("Token not found !");
+            ResponseError responseError = new ResponseError("Token not found", HttpStatus.BAD_REQUEST.value());
+            ResponseBody responseBody = new ResponseBody<>(null, responseError);
             return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
         }
 
