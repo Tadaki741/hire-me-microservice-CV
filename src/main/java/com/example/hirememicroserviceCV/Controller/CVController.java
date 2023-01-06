@@ -32,7 +32,7 @@ public class CVController {
 
     @PostMapping
     public ResponseEntity<ResponseBody<CV>> addCV(@RequestBody CVDTO cvdto) {
-        CV cv = this.cvService.save(new CV(cvdto.getEmail(),cvdto.getCVname(),cvdto.getCVBody()));
+        CV cv = this.cvService.save(new CV(cvdto.getEmail(),cvdto.getName(),cvdto.getCvBody()));
         ResponseBody<CV> responseBody = new ResponseBody<>(cv);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
