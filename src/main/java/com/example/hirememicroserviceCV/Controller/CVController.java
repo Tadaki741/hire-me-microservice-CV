@@ -2,6 +2,7 @@ package com.example.hirememicroserviceCV.Controller;
 
 import com.example.hirememicroserviceCV.HttpResponse.ResponseBody;
 import com.example.hirememicroserviceCV.Model.CV;
+import com.example.hirememicroserviceCV.Model.CVDTO;
 import com.example.hirememicroserviceCV.Repository.CVRepository;
 import com.example.hirememicroserviceCV.Service.CVService;
 import com.example.hirememicroserviceCV.Service.RestService;
@@ -33,12 +34,9 @@ public class CVController {
     }
 
     @PostMapping("/{email}/add")
-    public void addCV(@PathVariable String email, @RequestBody String cvBody) {
+    public void addCV(@PathVariable String email, @RequestBody CVDTO cvdto) {
 //        if (userRepository.findByEmail(user.getEmail()) == null) userRepository.save(user);
-        CV cv = new CV();
-        cv.setCvBody(cvBody);
-//        user.setCv(cv);
-        cv.setEmail(email);
+        CV cv = new CV(cvdto.getEmail(),cvdto.getCVname(),cvdto.getCVBody());
         cvRepository.save(cv);
     }
 
