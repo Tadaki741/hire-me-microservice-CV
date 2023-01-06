@@ -12,20 +12,20 @@ import org.hibernate.annotations.Type;
 @ToString
 public class CVDTO {
 
-    @JsonProperty("CVname")
-    private String CVname;
+    @JsonProperty("name")
+    private String name;
 
     @Type(type = "json")
-    @JsonProperty("CVBody")
-    private String CVBody;
+    @JsonProperty("cvBody")
+    private String cvBody;
 
     @JsonProperty("email")
     private String email;
 
     @JsonCreator
-    public CVDTO(String CVname, String CVBody, String email) {
-        this.CVname = CVname;
-        this.CVBody = CVBody;
+    public CVDTO(String name, String cvBody, String email) {
+        this.name = name;
+        this.cvBody = cvBody;
         this.email = email;
     }
 
