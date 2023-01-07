@@ -78,4 +78,12 @@ public class CVService {
         save(newCV);
     }
 
+    public CV getCV(String id) throws Exception {
+        CV cv = hashOperations.get(CV_CACHE, id);
+        if (cv == null) {
+            return cvRepository.findById(id).orElseThrow(() -> new Exception("CV is not found for this id: " + id));
+        }
+        return cv;
+    }
+
 }
