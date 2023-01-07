@@ -33,21 +33,26 @@ public class CVService {
     // Save operation.
     public CV save(final CV cv) {
         CV newCV = this.cvRepository.save(cv);
+
         //Update data to redis
-        this.saveCVToCache(newCV);
+        hashOperations.put(CV_CACHE, newCV.getId(), newCV);
 
         //save to database
         return newCV;
     }
 
-    public void saveCVToCache(final CV cv) {
-        hashOperations.put(CV_CACHE, cv.getId(), cv);
-    }
 
-    public Optional<CV> findByEmail(String email) {
-        CV redisUser = hashOperations.get(CV_CACHE, email);
-        if (redisUser != null) return Optional.of(redisUser);
-        return this.cvRepository.findById(email);
+    public Optional<CV> findById(String id) {
+        CV cachedCv = hashOperations.get(CV_CACHE, id);
+        if (cachedCv != null) return Optional.of(cachedCv);
+
+        Optional<CV> cvOptional = this.cvRepository.findById(id);
+        if (cvOptional.isPresent()) {
+            CV cv = cvOptional.get();
+            hashOperations.put(CV_CACHE, cv.getId(), cv);
+        }
+
+        return cvOptional;
     }
 
     // Find all cv's operation.

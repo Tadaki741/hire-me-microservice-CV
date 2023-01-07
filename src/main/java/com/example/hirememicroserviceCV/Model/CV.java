@@ -8,6 +8,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -18,7 +19,7 @@ import java.util.List;
 @Entity
 @Table(name = "cv")
 @TypeDefs({@TypeDef(name = "json", typeClass = JsonType.class)})
-public class CV {
+public class CV implements Serializable  {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
