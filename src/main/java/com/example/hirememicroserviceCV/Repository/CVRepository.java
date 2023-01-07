@@ -11,9 +11,9 @@ import java.util.List;
 
 @Repository
 public interface CVRepository extends JpaRepository<CV, String> {
-    @Modifying
-    @Query(value = "INSERT INTO cv (cv_body) VALUES (:cvBody::jsonb)", nativeQuery = true)
-    void insertJson(@Param("cvBody") String cvBody);
+//    @Modifying
+//    @Query(value = "INSERT INTO cv (cv_body) VALUES (:cvBody::jsonb)", nativeQuery = true)
+//    void insertJson(@Param("cvBody") String cvBody);
 
 
     //Find with email

@@ -71,4 +71,19 @@ public class CVService {
     public List<CV> findAllCVWithEmail(String email){
         return this.cvRepository.findAllByEmail(email);
     }
+
+    public void updateCV(String id, String cvBody) throws Exception {
+        CV newCV = cvRepository.findById(id).orElseThrow(() -> new Exception("CV is not found for this id: " + id));
+        newCV.setCvBody(cvBody);
+        save(newCV);
+    }
+
+    public CV getCV(String id) throws Exception {
+        CV cv = hashOperations.get(CV_CACHE, id);
+        if (cv == null) {
+            return cvRepository.findById(id).orElse(null);
+        }
+        return cv;
+    }
+
 }

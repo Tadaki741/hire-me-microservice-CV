@@ -73,4 +73,20 @@ public class CVController {
 
     }
 
+    @PostMapping(path = "/{id}")
+    public void updateCV(@PathVariable String id, @RequestBody CVDTO cvdto) throws Exception {
+        cvService.updateCV(id, cvdto.getCvBody());
+    }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<ResponseBody<CV>> getCV(@PathVariable String id) throws Exception {
+        CV cv = cvService.getCV(id);
+        if (cv == null) {
+            ResponseError responseError = new ResponseError("CV is not found", HttpStatus.NOT_FOUND.value());
+            ResponseBody responseBody = new ResponseBody<>(null, responseError);
+            return new ResponseEntity<>(responseBody, HttpStatus.OK);
+        }
+        ResponseBody<CV> responseBody = new ResponseBody<>(cv);
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    }
 }
