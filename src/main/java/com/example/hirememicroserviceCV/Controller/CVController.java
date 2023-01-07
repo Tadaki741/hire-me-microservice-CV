@@ -74,8 +74,8 @@ public class CVController {
     }
 
     @PostMapping(path = "/{id}")
-    public void updateCV(@PathVariable String id, @RequestParam String cvBody) throws Exception {
-        cvService.updateCV(id, cvBody);
+    public void updateCV(@PathVariable String id, @RequestBody CVDTO cvdto) throws Exception {
+        cvService.updateCV(id, cvdto.getCvBody());
     }
 
     @GetMapping(path = "/{id}")
