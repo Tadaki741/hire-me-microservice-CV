@@ -1,6 +1,7 @@
 package com.example.hirememicroserviceCV.Service;
 
 import com.example.hirememicroserviceCV.Model.CV;
+import com.example.hirememicroserviceCV.Model.CVDTO;
 import com.example.hirememicroserviceCV.Repository.CVRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
@@ -72,10 +73,11 @@ public class CVService {
         return this.cvRepository.findAllByEmail(email);
     }
 
-    public void updateCV(String id, String cvBody) throws Exception {
-        CV newCV = cvRepository.findById(id).orElseThrow(() -> new Exception("CV is not found for this id: " + id));
-        newCV.setCvBody(cvBody);
-        save(newCV);
+    public void updateCV(String id, CVDTO cvdto) throws Exception {
+        // check if cv exists
+        CV cv = cvRepository.findById(id).orElseThrow(() -> new Exception("CV is not found for this id: " + id));
+
+        this.cvRepository.updateNameAndCvBodyById(cvdto.getName(), cvdto.getCvBody(), id);
     }
 
     public CV getCV(String id) throws Exception {

@@ -73,9 +73,10 @@ public class CVController {
 
     }
 
-    @PostMapping(path = "/{id}")
+    @PatchMapping(path = "/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateCV(@PathVariable String id, @RequestBody CVDTO cvdto) throws Exception {
-        cvService.updateCV(id, cvdto.getCvBody());
+        cvService.updateCV(id, cvdto);
     }
 
     @GetMapping(path = "/{id}")
