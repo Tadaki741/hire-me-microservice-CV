@@ -19,10 +19,14 @@ public class CVDTO {
     @JsonProperty("cvBody")
     private String cvBody;
 
+    @JsonProperty("email")
+    private String email;
+
     @JsonCreator
-    public CVDTO(String name, String cvBody) {
+    public CVDTO(String name, String cvBody, String email) {
         this.name = name;
         this.cvBody = cvBody;
+        this.email = email;
     }
 
 
