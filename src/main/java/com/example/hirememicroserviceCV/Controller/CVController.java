@@ -84,7 +84,7 @@ public class CVController {
         if (cv == null) {
             ResponseError responseError = new ResponseError("CV is not found", HttpStatus.NOT_FOUND.value());
             ResponseBody responseBody = new ResponseBody<>(null, responseError);
-            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(responseBody, HttpStatus.OK);
         }
         ResponseBody<CV> responseBody = new ResponseBody<>(cv);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
