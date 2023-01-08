@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RestController
@@ -32,6 +33,7 @@ public class CVController {
 
     @PostMapping
     public ResponseEntity<ResponseBody<CV>> addCV(@RequestBody CVDTO cvdto) {
+        logger.log(Level.WARNING," --> !!!! adding new CV: " + cvdto.toString());
         CV cv = this.cvService.save(new CV(cvdto.getEmail(),cvdto.getName(),cvdto.getCvBody()));
         ResponseBody<CV> responseBody = new ResponseBody<>(cv);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
@@ -76,6 +78,7 @@ public class CVController {
     @PatchMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateCV(@PathVariable String id, @RequestBody CVDTO cvdto) throws Exception {
+        logger.log(Level.WARNING,"updating CV from cvDTO !!!" + cvdto.toString());
         cvService.updateCV(id, cvdto);
     }
 
