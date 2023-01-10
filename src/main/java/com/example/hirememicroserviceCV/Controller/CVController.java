@@ -32,11 +32,16 @@ public class CVController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseBody<CV>> addCV(@RequestBody CVDTO cvdto) {
-        logger.log(Level.WARNING," --> !!!! adding new CV: " + cvdto.toString());
-        CV cv = this.cvService.save(new CV(cvdto.getEmail(),cvdto.getName(),cvdto.getCvBody()));
-        ResponseBody<CV> responseBody = new ResponseBody<>(cv);
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    public ResponseEntity<ResponseBody<CV>> addCV(@RequestHeader(name = "Authorization") String requestHeader, @RequestBody CVDTO cvdto) {
+        boolean isAuthenticated = this.restService.verifyIDToken(requestHeader);
+        if (isAuthenticated) {
+            CV cv = this.cvService.save(new CV(cvdto.getEmail(),cvdto.getName(),cvdto.getCvBody()));
+            return new ResponseEntity<>(new ResponseBody<>(cv), HttpStatus.CREATED);
+        } else {
+            ResponseError responseError = new ResponseError("Unauthorized", HttpStatus.UNAUTHORIZED.value());
+            ResponseBody responseBody = new ResponseBody<>(null, responseError);
+            return new ResponseEntity<>(responseBody, HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @GetMapping(path = "/test")
@@ -50,14 +55,9 @@ public class CVController {
         logger.warning(" --> inside getAllCV function but is verifying data ! <--");
 
         try {
-            String[] arrayData = requestHeader.split(" ");
-            String extractedToken = arrayData[1];
+            boolean isAuthenticated = this.restService.verifyIDToken(requestHeader);
 
-            logger.warning("idToken is: " + extractedToken);
-
-            boolean isCorrect = this.restService.verifyIDToken(extractedToken);
-
-            if (isCorrect) {
+            if (isAuthenticated) {
                 List<CV> userCVList = this.cvService.findAllCVWithEmail(email);
                 ResponseBody<List<CV>> responseBodyAllCV = new ResponseBody<>(userCVList);
                 return new ResponseEntity<>(responseBodyAllCV, HttpStatus.OK);
@@ -68,22 +68,30 @@ public class CVController {
             return new ResponseEntity<>(responseBody, HttpStatus.UNAUTHORIZED);
 
         } catch (NullPointerException exception) {
-            ResponseError responseError = new ResponseError("Token not found", HttpStatus.BAD_REQUEST.value());
+            ResponseError responseError = new ResponseError("Token not found", HttpStatus.UNAUTHORIZED.value());
             ResponseBody responseBody = new ResponseBody<>(null, responseError);
-            return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(responseBody, HttpStatus.UNAUTHORIZED);
         }
 
     }
 
     @PatchMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateCV(@PathVariable String id, @RequestBody CVDTO cvdto) throws Exception {
-        logger.log(Level.WARNING,"updating CV from cvDTO !!!" + cvdto.toString());
+    public ResponseEntity updateCV(@RequestHeader(name = "Authorization") String requestHeader, @PathVariable String id, @RequestBody CVDTO cvdto) throws Exception {
+        boolean isAuthenticated = this.restService.verifyIDToken(requestHeader);
+        if (!isAuthenticated) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         cvService.updateCV(id, cvdto);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<ResponseBody<CV>> getCV(@PathVariable String id) throws Exception {
+    public ResponseEntity<ResponseBody<CV>> getCV(@RequestHeader(name = "Authorization") String requestHeader, @PathVariable String id) throws Exception {
+        boolean isAuthenticated = this.restService.verifyIDToken(requestHeader);
+        if (!isAuthenticated) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         CV cv = cvService.getCV(id);
         if (cv == null) {
             ResponseError responseError = new ResponseError("CV is not found", HttpStatus.NOT_FOUND.value());

@@ -47,7 +47,12 @@ public class RestService {
 
         // create a map for post parameters
         Map<String, Object> map = new HashMap<>();
-        map.put("idToken", requestHeaderToken);
+        if (requestHeaderToken.contains("Bearer")) {
+            map.put("idToken", requestHeaderToken.split(" ")[1]);
+        } else {
+            map.put("idToken", requestHeaderToken);
+        }
+
         // build the request
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(map, headers);
 
