@@ -101,4 +101,14 @@ public class CVController {
         ResponseBody<CV> responseBody = new ResponseBody<>(cv);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity deleteCV(@RequestHeader(name = "Authorization") String requestHeader, @PathVariable String id){
+        boolean isAuthenticated = this.restService.verifyIDToken(requestHeader);
+        if (!isAuthenticated) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        this.cvService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
